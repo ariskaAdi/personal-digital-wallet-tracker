@@ -19,6 +19,7 @@ func main() {
 
 	// INITIAL ROUTE
 	router.UserRoute(app)
+	router.AuthRoute(app)
 
 	app.Listen(":4000")
 }

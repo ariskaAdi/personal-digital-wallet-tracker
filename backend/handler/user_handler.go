@@ -8,8 +8,6 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-
-	"github.com/go-playground/validator/v10"
 )
 
 func UserHandlerGetAll(c *fiber.Ctx) error {
@@ -65,42 +63,7 @@ func UserHandlerGetById(c *fiber.Ctx) error {
 	})
 }
 
-func UserHandlerAddUser(c *fiber.Ctx) error {
-	user := new(request.UserCreateRequest)
-	if err := c.BodyParser(user); err != nil {
-		return err
-	}
 
-	// VALIDATE TO CHECK REQUIRED FIELD 
-	validate := validator.New()
-	err := validate.Struct(user)
-	if err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
-	}
-	
-	// CREATE NEW USER
-	newUser := entity.User{
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
-	}
-
-	// RETURN USER RESPONSE
-	userResponse := response.UserResponse{
-		Name:  newUser.Name,
-		Email: newUser.Email,
-	}
-
-	// CREATE USER TO DATABASE
-	database.DB.Debug().Create(&newUser)
-	return c.JSON(fiber.Map{
-		"message": "success add user",
-		"data":    userResponse,
-	})
-}
 
 func UserHandlerUpdateUser(c *fiber.Ctx) error {
 
