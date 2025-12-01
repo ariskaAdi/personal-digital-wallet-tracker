@@ -63,8 +63,6 @@ func UserHandlerGetById(c *fiber.Ctx) error {
 	})
 }
 
-
-
 func UserHandlerUpdateUser(c *fiber.Ctx) error {
 
 	// VALIDATE TO CHECK REQUIRED FIELD
@@ -146,4 +144,17 @@ func UserHandlerDeleteUser(c *fiber.Ctx) error {
 		"message": "success delete user",
 	})
 	
+}
+
+func UserHandlerGetMe(c *fiber.Ctx) error {
+	name := c.Locals("name")
+	email := c.Locals("email")
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data": fiber.Map{
+			"name": name,
+			"email": email,
+		},
+	})
 }

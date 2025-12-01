@@ -6,9 +6,11 @@ import (
 	"fiber/model/request"
 	"fiber/model/response"
 	"fiber/utils"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 )
 
 func LoginHandler(c *fiber.Ctx) error {
@@ -49,8 +51,39 @@ func LoginHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	// GENERATE JWT TOKEN
+	claims := jwt.MapClaims{}
+	claims["id"] = user.ID
+	claims["name"] = user.Name
+	claims["email"] = user.Email
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+	
+	token, errGenToken := utils.GenerateToken(&claims)
+	if errGenToken != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"success": false,
+			"message": errGenToken.Error(),
+		})
+	}
+
+	 // SET COOKIE
+    c.Cookie(&fiber.Cookie{
+        Name:     "token",
+        Value:    token,
+        HTTPOnly: true,
+        Secure:   false, // dev only
+        SameSite: "Lax",
+        Path:     "/",
+        Expires:  time.Now().Add(24 * time.Hour),
+    })
+
 	return c.JSON(fiber.Map{
-		"token" : "jsbdjs<JWT_TOKEN>",
+		"success" : true,
+		"message" : "success login",
+		"data": fiber.Map{
+			"token": token,
+		},
 	})
 }
 

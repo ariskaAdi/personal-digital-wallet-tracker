@@ -1,4 +1,6 @@
 "use client";
+import Notification from "@/components/molecules/Notification";
+import UserInfo from "@/components/molecules/UserInfo";
 import { cn } from "@/lib/utils";
 import {
   BanknoteArrowDown,
@@ -42,7 +44,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
         <div className="flex flex-col h-full">
-          {/* Logo */}
+          {/* User Info */}
           <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
             <Link href="/">
               <div className="flex items-center gap-2">
@@ -52,10 +54,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </div>
                 <div>
                   <h2 className="text-sidebar-foreground font-bold">
-                    Name User
+                    Name App
                   </h2>
                   <p className="text-sidebar-foreground/60 text-xs">
-                    useremail@email
+                    Personal Digital Wallet
                   </p>
                 </div>
               </div>
@@ -123,16 +125,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-2 flex flex-col overflow-hidden">
         {/* Mobile header */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-card">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-card">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-foreground">
+            className="text-foreground lg:hidden">
             <Menu className="w-6 h-6" />
           </button>
-          <h1 className="font-bold text-foreground">DASHBOARD</h1>
-          <div className="w-6" />
+          <UserInfo />
+
+          <div className="w-8 sm:hidden" />
+          <Notification />
         </div>
 
         {/* Page content */}
