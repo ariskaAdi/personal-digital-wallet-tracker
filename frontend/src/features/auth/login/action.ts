@@ -1,7 +1,7 @@
 "use server";
 
 import { apiUrl } from "@/constant/api_url";
-import { loginShema } from "@/lib/validation/auth";
+import { loginSchema } from "@/lib/validation/auth";
 import axios from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -14,7 +14,7 @@ export async function loginAction(prevState: unknown, formData: FormData) {
   };
 
   // VALIDATION ZOD
-  const parsed = loginShema.safeParse(user);
+  const parsed = loginSchema.safeParse(user);
   if (!parsed.success) {
     return {
       success: false,
@@ -29,18 +29,9 @@ export async function loginAction(prevState: unknown, formData: FormData) {
         "Content-Type": "application/json",
       },
     });
-    if (!result.data.success) {
-      return {
-        success: false,
-        message: result.data.message,
-      };
-    }
-
-    // SAVE TOKEN TO COOKIE
-    (await cookies()).set("token", result.data.data.token, {
-      httpOnly: true,
-      secure: true,
-    });
+    // SET to local storage
+    const cookieObj = await cookies();
+    cookieObj.set("token", result.data.data.token);
   } catch (error) {
     console.log("LOGIN ERROR", error);
 

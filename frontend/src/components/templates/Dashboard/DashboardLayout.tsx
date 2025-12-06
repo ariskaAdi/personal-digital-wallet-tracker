@@ -1,26 +1,31 @@
 "use client";
-import Notification from "@/components/molecules/Notification";
-import UserInfo from "@/components/molecules/UserInfo";
 import { cn } from "@/lib/utils";
 import {
-  BanknoteArrowDown,
-  BanknoteArrowUp,
+  ArrowLeftRight,
+  CreditCard,
+  FileText,
   LayoutDashboard,
   Menu,
   User,
+  Users,
+  Wallet,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+import NavbarDahsboard from "./navbar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const sideBarMenu = [
-  { icon: LayoutDashboard, label: "Dashboard", link: "/profile" },
-  { icon: BanknoteArrowUp, label: "Income", link: "/profile" },
-  { icon: BanknoteArrowDown, label: "Expense", link: "/profile" },
+  { icon: LayoutDashboard, label: "Dashboard", link: "/dashboard" },
+  { icon: ArrowLeftRight, label: "Transactions", link: "/transactions" },
+  { icon: CreditCard, label: "Card Center", link: "/card" },
+  { icon: Users, label: "Contacts", link: "/contacts" },
+  { icon: Wallet, label: "E-Wallet Center", link: "/wallet" },
+  { icon: FileText, label: "Reports", link: "/reports" },
 ];
 
 const userMenu = [{ icon: User, label: "Profile", link: "/profile" }];
@@ -120,6 +125,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <div className="mt-8">{/* <ButtonLogout /> */}</div>
               </nav>
             </div>
+            {/* Footer */}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
+              © Name App, 2025
+              <br />
+              Digital Payment Platform
+            </div>
           </div>
         </div>
       </div>
@@ -133,14 +144,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             className="text-foreground lg:hidden">
             <Menu className="w-6 h-6" />
           </button>
-          <UserInfo />
-
-          <div className="w-8 sm:hidden" />
-          <Notification />
+          <NavbarDahsboard />
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-2">{children}</main>
       </div>
     </div>
   );

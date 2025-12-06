@@ -9,7 +9,7 @@ import (
 type User struct {
 	ID        uint       `json:"id" gorm:"primary_key"`
 	Name      string    `json:"name"`
-	Email     string    `json:"email"`
+	Email     string    `json:"email" gorm:"uniqueIndex;not null"`
 	Password  string    `json:"-"`
 	Wallet    []Wallet  `json:"wallets" gorm:"constraint:OnDelete:CASCADE"`
 	CreatedAt time.Time `json:"created_at"`

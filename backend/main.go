@@ -29,6 +29,9 @@ func main() {
 	// INITIAL ROUTE
 	router.UserRoute(app)
 	router.AuthRoute(app)
+	router.WalletRoute(app)
+	router.TxRoute(app)
+	
 
 	app.Listen(":4000")
 }

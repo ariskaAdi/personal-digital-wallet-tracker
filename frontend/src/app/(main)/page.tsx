@@ -1,5 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
+import Link from "next/link";
 import { useState } from "react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -23,7 +25,7 @@ export default function Home() {
   };
   return (
     <div className="h-screen flex justify-center items-center">
-      <button onClick={fetchData}>CHECK USER</button>
+      <Button onClick={fetchData}>CHECK USER</Button>
       <div className="relative p-2 m-2 flex justify-center items-center">
         {data.length > 0 && (
           <ul>
@@ -35,6 +37,9 @@ export default function Home() {
           </ul>
         )}
       </div>
+      <Link href="/auth/login">
+        <Button>Login</Button>
+      </Link>
     </div>
   );
 }

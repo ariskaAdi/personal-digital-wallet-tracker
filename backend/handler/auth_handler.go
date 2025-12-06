@@ -13,6 +13,8 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+var validate = validator.New()
+
 func LoginHandler(c *fiber.Ctx) error {
 	loginRequest := new(request.LoginRequest)
 	if err := c.BodyParser(loginRequest); err != nil {
@@ -23,7 +25,6 @@ func LoginHandler(c *fiber.Ctx) error {
 	}
 	
 	// VALIDATE TO CHECK REQUIRED FIELD 
-	validate := validator.New()
 	errRequest := validate.Struct(loginRequest)
 	if errRequest != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -34,7 +35,7 @@ func LoginHandler(c *fiber.Ctx) error {
 
 	// CHECK AVAILABLE USER BY EMAIL
 	var user entity.User
-	err := database.DB.Debug().First(&user, "email = ?", loginRequest.Email).Error
+	err := database.DB.Take(&user, "email = ?", loginRequest.Email).Error
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
@@ -43,8 +44,7 @@ func LoginHandler(c *fiber.Ctx) error {
 	}
 
 	// VALIDATE HASH PASSWORD
-	isValid := utils.CheckedHashPassword(loginRequest.Password, user.Password)
-	if !isValid {
+	if  !utils.CheckedHashPassword(loginRequest.Password, user.Password) {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
 			"message": "invalid password or email",
@@ -67,17 +67,6 @@ func LoginHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	 // SET COOKIE
-    c.Cookie(&fiber.Cookie{
-        Name:     "token",
-        Value:    token,
-        HTTPOnly: true,
-        Secure:   false, // dev only
-        SameSite: "Lax",
-        Path:     "/",
-        Expires:  time.Now().Add(24 * time.Hour),
-    })
-
 	return c.JSON(fiber.Map{
 		"success" : true,
 		"message" : "success login",
@@ -91,6 +80,16 @@ func RegisterHandler(c *fiber.Ctx) error {
 	user := new(request.RegisterRequest)
 	if err := c.BodyParser(user); err != nil {
 		return err
+	}
+
+	//VALIATE EXISTING USER BY EMAIL
+	var existingUser entity.User
+	errExistingUser := database.DB.Take(&existingUser, "email = ?", user.Email).Error
+	if errExistingUser == nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "user already exist",
+		})
 	}
 
 	// VALIDATE TO CHECK REQUIRED FIELD 
@@ -121,12 +120,13 @@ func RegisterHandler(c *fiber.Ctx) error {
 
 	// RETURN USER RESPONSE
 	userResponse := response.UserResponse{
+		ID:    newUser.ID,
 		Name:  newUser.Name,
 		Email: newUser.Email,
 	}
 
 	// CREATE USER TO DATABASE
-	database.DB.Debug().Create(&newUser)
+	database.DB.Create(&newUser)
 	return c.JSON(fiber.Map{
 		"message": "success add user",
 		"data":    userResponse,

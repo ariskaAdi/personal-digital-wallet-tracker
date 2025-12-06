@@ -7,7 +7,7 @@ import (
 )
 
 func UserMiddleware(c *fiber.Ctx) error {
-	token := c.Get("Authorization")
+	token := c.Cookies("token")
 	if token == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"success" : false,
@@ -15,7 +15,7 @@ func UserMiddleware(c *fiber.Ctx) error {
 		})
 	}
 
-	name, email, err := utils.GetUserInfoFromToken(token)
+	name, email, userId, err := utils.GetUserInfoFromToken(token)
 	if err != nil {
 		return  c.Status(401).JSON(fiber.Map{
 			"success" : false,
@@ -25,5 +25,6 @@ func UserMiddleware(c *fiber.Ctx) error {
 
 	c.Locals("name", name)
 	c.Locals("email", email)
+	c.Locals("userId", uint(userId))
 	return c.Next()
 }

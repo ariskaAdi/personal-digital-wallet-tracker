@@ -1,6 +1,5 @@
-"use client";
 import { getMeUserService } from "@/services/user.service";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type UserInfoProps = {
   name: string;
@@ -8,27 +7,35 @@ export type UserInfoProps = {
 };
 
 const UserInfo = () => {
-  const [user, setUser] = useState<UserInfoProps | null>(null);
+  const [dataUser, setDataUser] = useState<UserInfoProps | null>(null);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setLoading(true);
+
+    const fetchData = async () => {
+      try {
+        const res = await getMeUserService();
+        setDataUser(res && res.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Loading user...</p>;
   return (
     <div className="flex justify-evenly gap-2">
-      {user && (
+      {dataUser && (
         <div>
-          <p>{user.name}</p>
-          <p>{user.email}</p>
+          <p className="text-sm font-bold">{dataUser.name}</p>
+          <p className="text-xs">{dataUser.email}</p>
         </div>
       )}
-      <button
-        onClick={async () => {
-          const res = await getMeUserService();
-          if (res?.success) {
-            setUser(res.data);
-          } else {
-            setUser(null);
-          }
-        }}>
-        CHECK
-      </button>
     </div>
   );
 };

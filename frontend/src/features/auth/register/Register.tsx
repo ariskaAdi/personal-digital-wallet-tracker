@@ -5,19 +5,11 @@ import AuthLayout from "@/components/templates/AuthLayout";
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
-import React from "react";
+import React, { useActionState } from "react";
+import { RegisterAction } from "./action";
 
 const Register = () => {
-  const formAction = (formData: FormData) => {
-    const newUser = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
-
-    console.log(newUser);
-  };
-
+  const [message, formAction, isPending] = useActionState(RegisterAction, null);
   return (
     <AuthLayout
       title="Register"
@@ -31,6 +23,10 @@ const Register = () => {
           </Link>
         </>
       }>
+      {/* ERROR MESSSAGE */}
+      {message?.success === false && (
+        <p className="mb-3 text-red-500 text-center">{message?.message}</p>
+      )}
       <form action={formAction} className="space-y-4">
         {/* Username */}
         <InputForm
@@ -60,7 +56,7 @@ const Register = () => {
 
         {/* Submit */}
         <Button type="submit" className="w-full">
-          Register
+          {isPending ? "Registering..." : "Register"}
         </Button>
       </form>
     </AuthLayout>
