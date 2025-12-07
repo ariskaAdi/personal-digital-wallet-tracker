@@ -1,12 +1,15 @@
 package middleware
 
 import (
+	"fiber/database"
+	"fiber/model/entity"
 	"fiber/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func UserMiddleware(c *fiber.Ctx) error {
+	// token := c.Get("Authorization")
 	token := c.Cookies("token")
 	if token == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -15,7 +18,7 @@ func UserMiddleware(c *fiber.Ctx) error {
 		})
 	}
 
-	name, email, userId, err := utils.GetUserInfoFromToken(token)
+	id, err := utils.GetUserInfoFromToken(token)
 	if err != nil {
 		return  c.Status(401).JSON(fiber.Map{
 			"success" : false,
@@ -23,8 +26,14 @@ func UserMiddleware(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Locals("name", name)
-	c.Locals("email", email)
-	c.Locals("userId", uint(userId))
+	var user entity.User
+	if err := database.DB.First(&user, "id = ?", id).Error; err != nil {
+		return c.Status(401).JSON(fiber.Map{
+			"success" : false,
+			"message": "invalid token",
+		})
+	}
+
+	c.Locals("userId", user)
 	return c.Next()
 }

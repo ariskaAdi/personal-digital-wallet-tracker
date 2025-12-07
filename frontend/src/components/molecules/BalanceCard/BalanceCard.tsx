@@ -1,7 +1,44 @@
+"use client";
+
 import RealTimeClock from "@/components/molecules/RealTimeClock";
+import { formatCurrency } from "@/lib/utils";
+import axios from "axios";
 import { Send, TrendingUp, MoreVertical } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function BalanceCard() {
+  const [balance, setBalance] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const response = async () => {
+      setIsLoading(true);
+      try {
+        const result = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/wallet`,
+          { withCredentials: true }
+        );
+        const wallet = result.data.data;
+        if (wallet.length > 0) {
+          setBalance(wallet[0].balance);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    response();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <p className="text-slate-600 dark:text-slate-400">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-6">
@@ -14,7 +51,9 @@ export default function BalanceCard() {
       </div>
 
       <div className="mb-6">
-        <p className="text-4xl font-bold text-teal-600 mb-2">$ 80,201.50</p>
+        <p className="text-4xl font-bold text-teal-600 mb-2">
+          {formatCurrency(balance)}
+        </p>
         <RealTimeClock />
       </div>
 

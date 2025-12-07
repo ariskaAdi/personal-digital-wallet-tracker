@@ -2,6 +2,7 @@ package router
 
 import (
 	"fiber/handler"
+	"fiber/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -9,7 +10,8 @@ import (
 func TxRoute(r *fiber.App) {
 	tx := r.Group("/tx")
 
-	tx.Post("/income", handler.TxIncomeHandler)
-	tx.Post("/expense", handler.TxExpenseHandler)
+	tx.Get("/", middleware.UserMiddleware, handler.TxHistoryAllHandler)
+	tx.Post("/income", middleware.UserMiddleware, handler.TxIncomeHandler)
+	tx.Post("/expense", middleware.UserMiddleware, handler.TxExpenseHandler)
 
 }

@@ -147,14 +147,11 @@ func UserHandlerDeleteUser(c *fiber.Ctx) error {
 }
 
 func UserHandlerGetMe(c *fiber.Ctx) error {
-	name := c.Locals("name")
-	email := c.Locals("email")
-
-	return c.JSON(fiber.Map{
-		"success": true,
-		"data": fiber.Map{
-			"name": name,
-			"email": email,
-		},
-	})
+    // Ambil userId dari middleware
+    user := c.Locals("userId").(entity.User)
+    return c.JSON(fiber.Map{
+        "success": true,
+        "message": "data user",
+        "data":    user,
+    })
 }

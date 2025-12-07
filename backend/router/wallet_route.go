@@ -13,4 +13,5 @@ func WalletRoute(r *fiber.App) {
 	wallet := r.Group("/wallet")
 
 	wallet.Get("/", middleware.UserMiddleware, handler.WalletHandlerGetByUser)
+	wallet.Post("/", middleware.UserMiddleware, handler.WalletHandlerCreate)
 }

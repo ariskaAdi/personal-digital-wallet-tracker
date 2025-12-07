@@ -16,16 +16,16 @@ import (
 var validate = validator.New()
 
 func LoginHandler(c *fiber.Ctx) error {
-	loginRequest := new(request.LoginRequest)
-	if err := c.BodyParser(loginRequest); err != nil {
+	var loginData request.LoginRequest
+	if err := c.BodyParser(&loginData); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
-			"message": err.Error(),
+			"message": "invalid requset",
 		})
 	}
 	
 	// VALIDATE TO CHECK REQUIRED FIELD 
-	errRequest := validate.Struct(loginRequest)
+	errRequest := validate.Struct(&loginData)
 	if errRequest != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
@@ -35,7 +35,7 @@ func LoginHandler(c *fiber.Ctx) error {
 
 	// CHECK AVAILABLE USER BY EMAIL
 	var user entity.User
-	err := database.DB.Take(&user, "email = ?", loginRequest.Email).Error
+	err := database.DB.Take(&user, "email = ?", &loginData.Email).Error
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
@@ -44,7 +44,7 @@ func LoginHandler(c *fiber.Ctx) error {
 	}
 
 	// VALIDATE HASH PASSWORD
-	if  !utils.CheckedHashPassword(loginRequest.Password, user.Password) {
+	if  !utils.CheckedHashPassword(loginData.Password, user.Password) {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
 			"message": "invalid password or email",
@@ -54,8 +54,6 @@ func LoginHandler(c *fiber.Ctx) error {
 	// GENERATE JWT TOKEN
 	claims := jwt.MapClaims{}
 	claims["id"] = user.ID
-	claims["name"] = user.Name
-	claims["email"] = user.Email
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 	

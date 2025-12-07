@@ -47,22 +47,21 @@ func DecodeToken(tokenSring string) (jwt.MapClaims, error) {
 
 }
 
-func GetUserInfoFromToken(tokenString string) (name string, email string, userId uint,  err error) {
-	claims, err := DecodeToken(tokenString)
+func GetUserInfoFromToken(tokenString string) (uint, error) {
+    claims, err := DecodeToken(tokenString)
+    if err != nil {
+        return 0, err
+    }
 
-	if err != nil {
-		return "", "", 0, err
-	}
+    claimID, ok := claims["id"]
+    if !ok {
+        return 0, fmt.Errorf("id not found in token")
+    }
 
-	name, _ = claims["name"].(string)
-	email, _ = claims["email"].(string)
-	uidFloat, _ := claims["userId"].(float64)
+    uidFloat, ok := claimID.(float64)
+    if !ok || uidFloat < 1 {
+        return 0, fmt.Errorf("invalid id claim")
+    }
 
-	if name == "" || email == "" {
-		return "", "", 0, fmt.Errorf("invalid token")
-	}
-
-	userId = uint(uidFloat)
-
-	return name, email, userId, nil
+    return uint(uidFloat), nil
 }

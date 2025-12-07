@@ -1,10 +1,12 @@
 export default function DebitCard() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-      <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-4">Debit Card Account</h2>
+      <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-4">
+        Debit Card Account
+      </h2>
 
       {/* Card preview */}
-      <div className="bg-gradient-to-br from-teal-500 to-teal-700 rounded-xl p-6 text-white mb-4 relative overflow-hidden">
+      <div className="bg-linear-to-br from-teal-500 to-teal-700 rounded-xl p-6 text-white mb-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8" />
 
         <div className="relative z-10">
@@ -16,14 +18,16 @@ export default function DebitCard() {
             <span className="text-sm font-semibold">Platinum Debit</span>
           </div>
 
-          <p className="text-lg font-mono tracking-widest mb-6">4771 6080 1080 7897</p>
+          <p className="text-lg font-mono tracking-widest mb-6">
+            4771 6080 1080 7897
+          </p>
 
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs opacity-75">Valid Thru</p>
               <p className="text-sm font-mono">08/25</p>
             </div>
-            <div className="w-12 h-8 bg-gradient-to-br from-yellow-300 to-orange-400 rounded">
+            <div className="w-12 h-8 bg-linear-to-br from-yellow-300 to-orange-400 rounded">
               <span className="text-xs font-bold text-white">VISA</span>
             </div>
           </div>
@@ -35,5 +39,5 @@ export default function DebitCard() {
         + Add Debit Card
       </button>
     </div>
-  )
+  );
 }
