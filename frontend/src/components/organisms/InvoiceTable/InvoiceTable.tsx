@@ -1,3 +1,4 @@
+import CardComponent from "@/components/molecules/CardComponent";
 import { Filter, Download } from "lucide-react";
 
 const invoices = [
@@ -33,11 +34,10 @@ const invoices = [
 
 export default function InvoiceTable() {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-          Invoice Activity
-        </h2>
+    <CardComponent
+      title="Invoice Activity"
+      titleClassName="text-lg font-semibold text-slate-900 dark:text-white"
+      actions={
         <div className="flex items-center gap-2">
           <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
             <Filter size={18} className="text-slate-400" />
@@ -46,8 +46,7 @@ export default function InvoiceTable() {
             <Download size={18} className="text-slate-400" />
           </button>
         </div>
-      </div>
-
+      }>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -103,6 +102,6 @@ export default function InvoiceTable() {
           </tbody>
         </table>
       </div>
-    </div>
+    </CardComponent>
   );
 }

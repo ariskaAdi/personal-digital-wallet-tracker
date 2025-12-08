@@ -21,11 +21,15 @@ interface DashboardLayoutProps {
 
 const sideBarMenu = [
   { icon: LayoutDashboard, label: "Dashboard", link: "/dashboard" },
-  { icon: ArrowLeftRight, label: "Transactions", link: "/transactions" },
-  { icon: CreditCard, label: "Card Center", link: "/card" },
-  { icon: Users, label: "Contacts", link: "/contacts" },
-  { icon: Wallet, label: "E-Wallet Center", link: "/wallet" },
-  { icon: FileText, label: "Reports", link: "/reports" },
+  {
+    icon: ArrowLeftRight,
+    label: "Transactions",
+    link: "/dashboard/transactions",
+  },
+  { icon: CreditCard, label: "Card Center", link: "/dashboard/card" },
+  { icon: Users, label: "Contacts", link: "/dashboard/contacts" },
+  { icon: Wallet, label: "E-Wallet Center", link: "/dashboard/wallet" },
+  { icon: FileText, label: "Reports", link: "/dashboard/reports" },
 ];
 
 const userMenu = [{ icon: User, label: "Profile", link: "/profile" }];

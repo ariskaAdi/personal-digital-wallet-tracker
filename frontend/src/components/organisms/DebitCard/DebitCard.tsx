@@ -1,10 +1,8 @@
+import CardComponent from "@/components/molecules/CardComponent";
+
 export default function DebitCard() {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-      <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-4">
-        Debit Card Account
-      </h2>
-
+    <CardComponent title="Debit Card Account">
       {/* Card preview */}
       <div className="bg-linear-to-br from-teal-500 to-teal-700 rounded-xl p-6 text-white mb-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8" />
@@ -38,6 +36,6 @@ export default function DebitCard() {
       <button className="w-full py-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
         + Add Debit Card
       </button>
-    </div>
+    </CardComponent>
   );
 }

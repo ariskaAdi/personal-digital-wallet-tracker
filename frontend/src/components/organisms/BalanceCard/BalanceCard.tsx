@@ -1,5 +1,6 @@
 "use client";
 
+import CardComponent from "@/components/molecules/CardComponent";
 import RealTimeClock from "@/components/molecules/RealTimeClock";
 import { formatCurrency } from "@/lib/utils";
 import axios from "axios";
@@ -15,7 +16,7 @@ export default function BalanceCard() {
       setIsLoading(true);
       try {
         const result = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/wallet`,
+          `${process.env.NEXT_PUBLIC_API_URL}/wallet/all`,
           { withCredentials: true }
         );
         const wallet = result.data.data;
@@ -40,16 +41,13 @@ export default function BalanceCard() {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-          Your Total Balance
-        </h2>
+    <CardComponent
+      title="Your Total Balance"
+      actions={
         <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
           <MoreVertical size={18} className="text-slate-400" />
         </button>
-      </div>
-
+      }>
       <div className="mb-6">
         <p className="text-4xl font-bold text-teal-600 mb-2">
           {formatCurrency(balance)}
@@ -78,6 +76,6 @@ export default function BalanceCard() {
           </span>
         </button>
       </div>
-    </div>
+    </CardComponent>
   );
 }

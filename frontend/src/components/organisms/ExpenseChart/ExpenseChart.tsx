@@ -2,6 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { MoreVertical } from "lucide-react";
+import CardComponent from "@/components/molecules/CardComponent";
 
 const data = [
   { name: "Spent", value: 85.5, color: "#0d9488" },
@@ -10,16 +11,13 @@ const data = [
 
 export default function ExpensesChart() {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-          Expenses Instead
-        </h2>
+    <CardComponent
+      title="Expenses Instead"
+      actions={
         <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
           <MoreVertical size={18} className="text-slate-400" />
         </button>
-      </div>
-
+      }>
       <div className="flex flex-col items-center">
         <div className="w-32 h-32 mb-4">
           <ResponsiveContainer width="100%" height="100%">
@@ -55,6 +53,6 @@ export default function ExpensesChart() {
           <p className="text-lg font-bold text-teal-600">$1,820.80</p>
         </div>
       </div>
-    </div>
+    </CardComponent>
   );
 }

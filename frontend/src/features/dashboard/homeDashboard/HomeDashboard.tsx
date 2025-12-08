@@ -1,8 +1,8 @@
-import BalanceCard from "@/components/molecules/BalanceCard";
-import DebitCard from "@/components/molecules/DebitCard";
-import ExpensesChart from "@/components/molecules/ExpenseChart";
-import InvoiceTable from "@/components/molecules/InvoiceTable";
-import RecentTx from "@/components/molecules/RecentTx";
+import BalanceCard from "@/components/organisms/BalanceCard";
+import DebitCard from "@/components/organisms/DebitCard";
+import ExpensesChart from "@/components/organisms/ExpenseChart";
+import InvoiceTable from "@/components/organisms/InvoiceTable";
+import RecentTx from "@/components/organisms/RecentTx";
 
 export default function HomeDashboard() {
   return (
@@ -35,15 +35,10 @@ export default function HomeDashboard() {
               <RecentTx />
             </div>
 
-            {/* Invoice activity table - hidden on mobile, shown on tablet+ */}
-            <div className="hidden lg:block">
+            {/* Invoice activity table */}
+            <div className="w-full lg:w-auto order-2 lg:order-1">
               <InvoiceTable />
             </div>
-          </div>
-
-          {/* Invoice table full width on mobile/tablet */}
-          <div className="lg:hidden">
-            <InvoiceTable />
           </div>
         </div>
       </div>
