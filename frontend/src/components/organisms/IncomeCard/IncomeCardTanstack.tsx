@@ -9,9 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import axios from "axios";
 import React, { useActionState, useEffect, useState } from "react";
-import { incomeAction } from "../../../features/dashboard/transactions/action";
+import {
+  fetchWallets,
+  incomeAction,
+} from "../../../features/dashboard/transactions/action";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type IData = {
   id: number;
@@ -19,41 +23,43 @@ type IData = {
   balance: number;
 };
 
-const IncomeCard = () => {
-  const [wallets, setWallets] = useState<IData[]>([]);
-  const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
-  const [selectedWalletName, setSelectedWalletName] = useState("");
-  const [loading, setLoading] = useState(false);
+const IncomeCardTanstack = ({
+  initialWallets = [],
+}: {
+  initialWallets?: IData[];
+}) => {
+  // store data in state
+  const [selectedWalletId, setSelectedWalletId] = useState(
+    initialWallets[0]?.id ?? null
+  );
+  const [selectedWalletName, setSelectedWalletName] =
+    useState(initialWallets[0]?.name) ?? "";
+
+  // form action react-19
   const [message, formAction, isPending] = useActionState(incomeAction, null);
 
+  //   showing toast
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/wallet/all`,
-          { withCredentials: true }
-        );
-        const data: IData[] = response.data.data;
+    if (!message) return;
 
-        setWallets(data);
-        // auto select first wallet
-        if (data.length > 0) {
-          setSelectedWalletId(data[0].id);
-          setSelectedWalletName(data[0].name);
-        }
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      } finally {
-      }
-    };
-    fetchData();
-  }, []);
+    if (message.success) {
+      toast.success(message.message);
+    } else {
+      toast.error(message.message);
+    }
+  }, [message]);
 
-  if (loading) {
-    return <p>loading...</p>;
+  //   tanstack query
+  const { data: wallets } = useQuery({
+    queryKey: ["wallets"],
+    queryFn: fetchWallets,
+    initialData: initialWallets,
+  });
+
+  if (!wallets || wallets.length === 0) {
+    return <p>No wallets found</p>;
   }
+
   return (
     <CardComponent
       title="Add Income"
@@ -65,14 +71,14 @@ const IncomeCard = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
-            {wallets.map((wallet) => (
+            {wallets.map((w: IData) => (
               <DropdownMenuItem
-                key={wallet.id}
+                key={w.id}
                 onClick={() => {
-                  setSelectedWalletId(wallet.id);
-                  setSelectedWalletName(wallet.name);
+                  setSelectedWalletId(w.id);
+                  setSelectedWalletName(w.name);
                 }}>
-                {wallet.name}
+                {w.name}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -106,4 +112,4 @@ const IncomeCard = () => {
   );
 };
 
-export default IncomeCard;
+export default IncomeCardTanstack;

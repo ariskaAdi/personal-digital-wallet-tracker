@@ -1,3 +1,5 @@
-import IncomeCard from "./IncomeCard";
+// import IncomeCard from "./IncomeCard";
 
-export default IncomeCard;
+import IncomeCardTanstack from "./IncomeCardTanstack";
+
+export default IncomeCardTanstack;

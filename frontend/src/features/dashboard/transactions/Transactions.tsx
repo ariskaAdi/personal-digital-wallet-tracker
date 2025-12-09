@@ -1,9 +1,10 @@
 import ExpenseCard from "@/components/organisms/ExpenseCard";
-import IncomeCard from "@/components/organisms/IncomeCard";
+import IncomeCardTanstack from "@/components/organisms/IncomeCard";
 import RecentTx from "@/components/organisms/RecentTx";
-import React from "react";
+import { fetchWallets } from "@/features/dashboard/transactions/action";
 
-const Transactions = () => {
+const Transactions = async () => {
+  const wallets = await fetchWallets();
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Scrollable content */}
@@ -13,9 +14,8 @@ const Transactions = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent transactions */}
             <div>
-              <IncomeCard />
+              <IncomeCardTanstack initialWallets={wallets} />
             </div>
-
             {/* Invoice activity table - hidden on mobile, shown on tablet+ */}
             <div>
               <ExpenseCard />
