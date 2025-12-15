@@ -11,7 +11,7 @@ type Users struct {
 	Name      string    `json:"name"`
 	Email     string    `json:"email" gorm:"uniqueIndex;not null"`
 	Password  string    `json:"-"`
-	Wallet    []Wallet  `json:"wallets" gorm:"constraint:OnDelete:CASCADE"`
+	// Wallet    []Wallet  `json:"wallets" gorm:"constraint:OnDelete:CASCADE"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`
 	DeletedAt gorm.DeletedAt   `json:"deleted_at" gorm:"index"`

@@ -31,7 +31,7 @@ func (r *userRepository) Create(ctx context.Context, user entity.Users) (entity.
 }
 
 func (r *userRepository) Update(ctx context.Context, user entity.Users) (entity.Users, error) {
-	res := r.db.WithContext(ctx).Model(&entity.Users{}).Updates(user)
+	res := r.db.WithContext(ctx).Model(&entity.Users{}).Where("id = ?", user.ID).Updates(user)
 
 	if res.Error != nil {
 		return entity.Users{}, res.Error
