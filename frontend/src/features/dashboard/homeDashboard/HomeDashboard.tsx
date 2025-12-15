@@ -3,7 +3,6 @@ import DebitCard from "@/components/organisms/DebitCard";
 import ExpensesChart from "@/components/organisms/ExpenseChart";
 import InvoiceTable from "@/components/organisms/InvoiceTable";
 import RecentTx from "@/components/organisms/RecentTx";
-
 export default function HomeDashboard() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
