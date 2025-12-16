@@ -1,12 +1,14 @@
 package main
 
 import (
+	"ariskaAdi/personal-digital-wallet/external/database"
 	"ariskaAdi/personal-digital-wallet/internal/config"
 	"ariskaAdi/personal-digital-wallet/internal/handler"
 	"ariskaAdi/personal-digital-wallet/internal/repositories"
 	"ariskaAdi/personal-digital-wallet/internal/routes"
 	"ariskaAdi/personal-digital-wallet/internal/services"
 	"ariskaAdi/personal-digital-wallet/internal/utils"
+	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +18,18 @@ func main() {
 	app := fiber.New()
 
 	// INITIAL DATABASE
-	db := config.OpenConnection()
+	filename := "../../cmd/api/config.yaml"
+	if err := config.LoadConfig(filename); err != nil {
+		panic(err)
+	}
+	db, err := database.ConnectPostgres(config.Cfg.DB)
+	if err != nil {
+		panic(err)
+	}
+
+	if db != nil {
+		log.Println("db connected")
+	}
 
 	// USERS
     userRepo := repositories.NewUserRepository(db)

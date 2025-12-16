@@ -17,24 +17,6 @@ func NewUserHandler(service services.UserService) *UserHandler {
 	return &UserHandler{service}
 }
 
-func (h *UserHandler) Create(c *fiber.Ctx) error {
-	var req request.CreateUserRequest
-	if err := c.BodyParser(&req); err != nil {
-		return utils.ErrorMessage(c, fiber.StatusBadRequest, err)
-	}
-
-	res, err := h.service.Create(c.Context(), req)
-	if err != nil {
-		return utils.ErrorMessage(c, fiber.StatusBadRequest, err)
-	}
-
-	response := response.NewUserResponse(res)
-
-	return c.JSON(fiber.Map{
-		"success": true,
-		"data": response,
-	})
-}
 
 func (h *UserHandler) Update(c *fiber.Ctx) error {
 	  var req request.UpdateUserRequest

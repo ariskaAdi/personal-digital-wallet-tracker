@@ -3,14 +3,12 @@ package entity
 import "time"
 
 type Wallet struct {
-	ID     uint `json:"id" gorm:"primary_key"`
-	UserId uint `json:"user_id"`
-	User   Users `json:"user" gorm:"foreignKey:UserId"`
+	ID     uint   `json:"id" db:"id"`
+	UserID uint   `json:"user_id" db:"user_id"`
 
-	Name         string        `json:"name"`
-	Balance      float64       `json:"balance"`
-	Transactions []Transaction `json:"transactions" gorm:"constraint:OnDelete:CASCADE"`
+	Name    string  `json:"name" db:"name"`
+	Balance float64 `json:"balance" db:"balance"`
 
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }

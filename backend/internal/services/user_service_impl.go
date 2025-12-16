@@ -16,25 +16,6 @@ func NewUserService(repo repositories.UserRepository) UserService {
 	return &userService{repo}
 }
 
-func (s *userService) Create(ctx context.Context, req request.CreateUserRequest) (entity.Users, error) {
-	if req.Name == "" {
-		return entity.Users{}, errors.New("name tidak boleh kosong")
-	}
-	if req.Email == "" {
-		return entity.Users{}, errors.New("email tidak boleh kosong")
-	}
-	if req.Password == "" {
-		return entity.Users{}, errors.New("password tidak boleh kosong")
-	}
-
-	user := entity.Users{
-		Name:     req.Name,
-		Email:    req.Email,
-		Password: req.Password,
-	}
-
-	return s.repo.Create(ctx, user)
-}
 
 func (s *userService) Update(ctx context.Context, req request.UpdateUserRequest) (entity.Users, error) {
 	// if req. <= 0 {

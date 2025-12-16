@@ -10,7 +10,6 @@ import (
 	"errors"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type authService struct {
@@ -44,10 +43,6 @@ func (s *authService) Register(
 		return response.AuthResponse{}, errors.New("email sudah terdaftar")
 	}
 
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return response.AuthResponse{}, err
-	}
-
 	// 3. Hash password
 	hashed, err := bcrypt.GenerateFromPassword(
 		[]byte(req.Password),
@@ -69,17 +64,9 @@ func (s *authService) Register(
 		return response.AuthResponse{}, err
 	}
 
-	// 5. Generate JWT
-	token, err := s.jwt.Generate(int(created.ID), created.Email)
-	if err != nil {
-		return response.AuthResponse{}, err
-	}
-
 	return response.AuthResponse{
-		Id:    int(created.ID),
 		Name:  created.Name,
 		Email: created.Email,
-		Token: token,
 	}, nil
 }
 

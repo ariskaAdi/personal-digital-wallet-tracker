@@ -3,8 +3,9 @@ package repositories
 import (
 	"ariskaAdi/personal-digital-wallet/internal/model/entity"
 	"context"
+	"database/sql"
 
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 type UserRepository interface {
@@ -17,41 +18,80 @@ type UserRepository interface {
 }
 
 type userRepository struct {
-	db *gorm.DB
+	db *sqlx.DB
 }
 
 // Composition Root
-func NewUserRepository(db *gorm.DB) UserRepository {
-	return &userRepository{db}
+func NewUserRepository(db *sqlx.DB) UserRepository {
+	return &userRepository{db: db}
 }
 
 func (r *userRepository) Create(ctx context.Context, user entity.Users) (entity.Users, error) {
-	err := r.db.WithContext(ctx).Create(&user).Error
-	return  user, err
+	SQL := `
+		INSERT INTO users (name, email, password)
+		VALUES ($1, $2, $3)
+		RETURNING id
+	`
+	err := r.db.QueryRowContext(
+		ctx,
+		SQL,
+		user.Name,
+		user.Email,
+		user.Password,
+	).Scan(&user.ID)
+
+	return user, err
 }
 
 func (r *userRepository) Update(ctx context.Context, user entity.Users) (entity.Users, error) {
-	res := r.db.WithContext(ctx).Model(&entity.Users{}).Where("id = ?", user.ID).Updates(user)
+	SQL := `
+		UPDATE users
+		SET name = $1, email = $2, password = $3
+		WHERE id = $4
+	` 
 
-	if res.Error != nil {
-		return entity.Users{}, res.Error
+	res, err := r.db.ExecContext(
+		ctx,
+		SQL,
+		user.Name,
+		user.Email,
+		user.Password,
+		user.ID,
+	)
+
+	if err != nil {
+		return entity.Users{}, err
 	}
 
-	if res.RowsAffected == 0 {
-		return entity.Users{}, gorm.ErrRecordNotFound
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return entity.Users{}, err
+	}
+
+	if rows == 0 {
+		return entity.Users{}, err
 	}
 
 	return user, nil
 }
 
 func (r *userRepository) Delete(ctx context.Context, id int) error {
-	res := r.db.WithContext(ctx).Delete(&entity.Users{}, id)
-		if res.Error != nil {
-		return res.Error
+	SQL := `
+		DELETE FROM users
+		WHERE id = $1
+	`
+	res, err := r.db.ExecContext(ctx, SQL, id)
+	if err != nil {
+		return err
 	}
 
-	if res.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return sql.ErrNoRows
 	}
 
 	return nil
@@ -59,18 +99,34 @@ func (r *userRepository) Delete(ctx context.Context, id int) error {
 
 func (r *userRepository) FindAll(ctx context.Context) ([]entity.Users, error) {
 	var users []entity.Users
-	err := r.db.WithContext(ctx).Find(&users).Error
-	return  users, err
+	SQL := `
+		SELECT id, name, email FROM users
+	`
+	err := r.db.SelectContext(ctx, &users, SQL)
+
+	return users, err
 }
 
 func (r *userRepository) FindById(ctx context.Context, id int) (entity.Users, error) {
 	var user entity.Users
-	err := r.db.WithContext(ctx).First(&user, id).Error
-	return  user, err
+	SQL := `
+		SELECT id, name, email FROM users
+		WHERE id = $1
+	`
+
+	err := r.db.GetContext(ctx, &user, SQL, id)
+
+	return user, err
 }
 
 func (r *userRepository) FindByEmail(ctx context.Context, email string) (entity.Users, error) {
 	var user entity.Users
-	err := r.db.WithContext(ctx).Where("email = ?", email ).First(&user).Error
+	SQL := `
+		SELECT email, password FROM users
+		WHERE email = $1
+	`
+
+	err := r.db.GetContext(ctx, &user, SQL, email)
+
 	return  user, err
 }

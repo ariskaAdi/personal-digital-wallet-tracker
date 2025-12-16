@@ -7,7 +7,6 @@ import (
 )
 
 type UserService interface {
-	Create(ctx context.Context, req  request.CreateUserRequest) (entity.Users, error)
 	Update(ctx context.Context, req request.UpdateUserRequest) (entity.Users, error)
 	Delete(ctx context.Context, id int) error
 	FindAll(ctx context.Context) ([]entity.Users, error)

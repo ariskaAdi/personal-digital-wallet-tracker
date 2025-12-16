@@ -1,16 +1,45 @@
 package config
 
 import (
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"os"
+
+	"go.yaml.in/yaml/v3"
 )
 
-func OpenConnection() *gorm.DB {
-	dialect := "host=localhost user=postgres password=postgres dbname=fiber port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-	db, err := gorm.Open(postgres.Open(dialect), &gorm.Config{})
+type Config struct {
+	App AppConfig `yaml:"app"`
+	DB   DBConfig   `yaml:"db"`
+}
+
+type AppConfig struct {
+	Name string `yaml:"name"`
+	Port string `yaml:"port"`
+}
+
+type DBConfig struct {
+	Host           string                 `yaml:"host"`
+	Port           string                 `yaml:"port"`
+	User           string                 `yaml:"user"`
+	Password       string                 `yaml:"password"`
+	Name           string                 `yaml:"name"`
+	ConnectionPool DBConnectionPoolConfig `yaml:"connection_pool"`
+}
+
+type DBConnectionPoolConfig struct {
+	MaxIdleConnection     uint8 `yaml:"max_idle_connection"`
+	MaxOpenConnection     uint8 `yaml:"max_open_connection"`
+	MaxLifetimeConnection uint8 `yaml:"max_lifetime_connection"`
+	MaxIdleTimeConnection uint8 `yaml:"max_idle_time_connection"`
+}
+
+var Cfg Config
+
+func LoadConfig(filename string) (err error) {
+	configByte, err := os.ReadFile(filename)
 	if err != nil {
-		panic(err)
+		return
 	}
-	
-	return db
+
+	return yaml.Unmarshal(configByte, &Cfg)
+
 }

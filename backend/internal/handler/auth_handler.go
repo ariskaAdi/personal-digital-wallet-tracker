@@ -23,14 +23,14 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 		return utils.ErrorMessage(c, 400, err)
 	}
 
-	res, err := h.service.Register(c.Context(), req)
+	_, err := h.service.Register(c.Context(), req)
 	if err != nil {
 		return utils.ErrorMessage(c, 400, err)
 	}
 
 	return c.JSON(fiber.Map{
 		"success": true,
-		"data":    res,
+		"message": "user suscessfuly created",
 	})
 }
 
