@@ -7,6 +7,7 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
+	Id       int
 	Name     string
 	Email    string
 	Password string

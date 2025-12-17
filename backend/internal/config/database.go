@@ -14,6 +14,7 @@ type Config struct {
 type AppConfig struct {
 	Name string `yaml:"name"`
 	Port string `yaml:"port"`
+	JWTSecret string `yaml:"jwt_secret"`
 }
 
 type DBConfig struct {

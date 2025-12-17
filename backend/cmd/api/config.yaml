@@ -1,6 +1,7 @@
 app:
   name: "ariskaAdi/personal-digital-wallet"
   port: "4000"
+  jwt_secret: "dev-secret-123"
 
 db:
   host: "localhost"

@@ -9,7 +9,6 @@ import (
 	"ariskaAdi/personal-digital-wallet/internal/services"
 	"ariskaAdi/personal-digital-wallet/internal/utils"
 	"log"
-	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -37,18 +36,26 @@ func main() {
     userHandler := handler.NewUserHandler(userService)
 
 	// AUTH
-	jwtService := utils.NewJWTService(os.Getenv("JWT_SECRET"))
+	jwtService := utils.NewJWTService(config.Cfg.App.JWTSecret)
 	authService := services.NewAuthService(userRepo, jwtService)
 	authHandler := handler.NewAuthHandler(authService)
+
+	// WALLET
+	walletRepo := repositories.NewWalletRepository(db)
+	walletService := services.NewWalletService(walletRepo)
+	walletHandler := handler.NewWalletHandler(walletService)
 
 
 	// Routes
     routes.UserRoutes(app, userHandler)
 	routes.AuthRoutes(app, authHandler)
+	routes.WalletRoutes(app, walletHandler, jwtService)
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+		return c.SendString("Welcome to Personal Digital Wallet API")
 	})
+
+	
 
 	app.Listen(":4000")
 }

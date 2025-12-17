@@ -19,8 +19,15 @@ func NewUserResponse(user entity.Users) UserResponse {
 		Name: user.Name,
 		Email: user.Email,
 		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
 
+	}
+}
+
+func UpdateUserResponse(user entity.Users) UserResponse {
+	return UserResponse{
+		Name: user.Name,
+		Email: user.Email,
+		UpdatedAt: user.UpdatedAt,
 	}
 }
 

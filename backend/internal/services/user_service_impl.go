@@ -2,10 +2,13 @@ package services
 
 import (
 	"ariskaAdi/personal-digital-wallet/internal/dto/request"
+	"ariskaAdi/personal-digital-wallet/internal/dto/response"
 	"ariskaAdi/personal-digital-wallet/internal/model/entity"
 	"ariskaAdi/personal-digital-wallet/internal/repositories"
 	"context"
 	"errors"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userService struct {
@@ -17,26 +20,39 @@ func NewUserService(repo repositories.UserRepository) UserService {
 }
 
 
-func (s *userService) Update(ctx context.Context, req request.UpdateUserRequest) (entity.Users, error) {
-	// if req. <= 0 {
-	//     return entity.Users{}, errors.New("id tidak valid")
-	// }
-	if req.Name == "" {
-		return entity.Users{}, errors.New("name tidak boleh kosong")
+func (s *userService) Update(ctx context.Context, req request.UpdateUserRequest, id int) (response.AuthResponse, error) {
+	if id <= 0 {
+	    return response.AuthResponse{}, errors.New("id tidak valid")
 	}
-	if req.Email == "" {
-		return entity.Users{}, errors.New("email tidak boleh kosong")
+
+	if req.Name == "" || req.Email == "" || req.Password == ""{
+		return response.AuthResponse{}, errors.New("field tidak boleh kosong")
 	}
-	if req.Password == "" {
-		return entity.Users{}, errors.New("password tidak boleh kosong")
+
+		// 3. Hash password
+	hashed, err := bcrypt.GenerateFromPassword(
+		[]byte(req.Password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		return response.AuthResponse{}, err
 	}
 
 	user := entity.Users{
+		ID:       uint(id),
 		Name:     req.Name,
 		Email:    req.Email,
-		Password: req.Password,
+		Password: string(hashed),
 	}
-	return s.repo.Update(ctx, user)
+	updated, err := s.repo.Update(ctx, user)
+	if err != nil {
+		return response.AuthResponse{}, err
+	}
+
+	return response.AuthResponse{
+		Name:  updated.Name,
+		Email: updated.Email,
+	}, nil
 }
 
 func (s *userService) Delete(ctx context.Context, id int) error {

@@ -28,8 +28,8 @@ func NewUserRepository(db *sqlx.DB) UserRepository {
 
 func (r *userRepository) Create(ctx context.Context, user entity.Users) (entity.Users, error) {
 	SQL := `
-		INSERT INTO users (name, email, password)
-		VALUES ($1, $2, $3)
+		INSERT INTO users (name, email, password, created_at)
+		VALUES ($1, $2, $3, now())
 		RETURNING id
 	`
 	err := r.db.QueryRowContext(
@@ -46,7 +46,7 @@ func (r *userRepository) Create(ctx context.Context, user entity.Users) (entity.
 func (r *userRepository) Update(ctx context.Context, user entity.Users) (entity.Users, error) {
 	SQL := `
 		UPDATE users
-		SET name = $1, email = $2, password = $3
+		SET name = $1, email = $2, password = $3, updated_at = now()
 		WHERE id = $4
 	` 
 
@@ -69,7 +69,7 @@ func (r *userRepository) Update(ctx context.Context, user entity.Users) (entity.
 	}
 
 	if rows == 0 {
-		return entity.Users{}, err
+		return entity.Users{}, sql.ErrNoRows
 	}
 
 	return user, nil
@@ -122,7 +122,7 @@ func (r *userRepository) FindById(ctx context.Context, id int) (entity.Users, er
 func (r *userRepository) FindByEmail(ctx context.Context, email string) (entity.Users, error) {
 	var user entity.Users
 	SQL := `
-		SELECT email, password FROM users
+		SELECT id, email, password FROM users
 		WHERE email = $1
 	`
 

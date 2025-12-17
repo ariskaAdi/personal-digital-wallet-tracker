@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type Wallet struct {
+type Wallets struct {
 	ID     uint   `json:"id" db:"id"`
 	UserID uint   `json:"user_id" db:"user_id"`
 

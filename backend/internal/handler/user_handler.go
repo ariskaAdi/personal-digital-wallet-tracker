@@ -19,21 +19,25 @@ func NewUserHandler(service services.UserService) *UserHandler {
 
 
 func (h *UserHandler) Update(c *fiber.Ctx) error {
+
+    id, err := c.ParamsInt("id")
+    if err != nil {
+       return utils.ErrorMessage(c, fiber.StatusBadRequest, err)
+    }
+
 	  var req request.UpdateUserRequest
     if err := c.BodyParser(&req); err != nil {
        return utils.ErrorMessage(c, fiber.StatusBadRequest, err)
     }
 
-    res, err := h.service.Update(c.Context(), req)
-    if err != nil {
-        return utils.ErrorMessage(c, fiber.StatusBadRequest, err)
+    _, errUpdate := h.service.Update(c.Context(), req, id)
+    if errUpdate != nil {
+        return utils.ErrorMessage(c, 400, errUpdate)
     }
-
-    response := response.NewUserResponse(res)
 
     return c.JSON(fiber.Map{
         "success": true,
-        "data": response,
+        "data":    "user updated",
     })
 }
 
@@ -75,6 +79,7 @@ func (h *UserHandler) FindById(c *fiber.Ctx) error {
     if err != nil {
         return utils.ErrorMessage(c, fiber.StatusBadRequest, err)
     }
+
 
     response := response.NewUserResponse(user)
 
